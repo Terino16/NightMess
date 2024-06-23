@@ -27,16 +27,14 @@ const Navbar = () => {
   ];
 
   return (
-    <>
-      <header className="bg-[#070F2B]">
+      <header className=" bg-black shadow">
         <nav
-          className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 py-2 px-6 lg:px-8 text-white"
+          className="mx-auto z-10 flex max-w-7xl items-center justify-between gap-x-6  px-6 lg:px-8 "
           aria-label="Global"
         >
           <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <Image src={Logo} width={100} height={100} alt="star logo" />
+            <Link href="/" className="p-8">
+              <span className="text-xl font-bold">NightMess</span>
             </Link>
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
@@ -44,7 +42,7 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-[#9290C3] lg:block lg:text-sm lg:font-semibold lg:leading-6"
+                className="text-sm font-semibold leading-6  lg:block lg:text-sm lg:font-semibold lg:leading-6"
               >
                 {item.name}
               </Link>
@@ -54,32 +52,26 @@ const Navbar = () => {
             {!session ? (
               <>
                 <Link
-                  href="/signin"
-                  className="rounded-md  px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  href="/signup"
+                  className="rounded-[20px]  px-3 py-2 border border-gray-500 border-1 text-sm font-semibold  shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   SignIn
                 </Link>
-                <Link
-                  href="/register"
-                  className="rounded-md  px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign up
-                </Link>
               </>
             ) : (
-              <div className="flex items-end space-x-4">
+              <div className="flex items-center  space-x-4">
                 {seller && 
-              <Link className="  text-[#9290C3] lg:block lg:text-sm lg:font-semibold lg:leading-6" href={`/dashboard/${session.user.email}`}>
+              <Link className="   lg:block lg:text-sm lg:font-semibold lg:leading-6" href={`/dashboard/${session.user.email}`}>
                   DashBoard
                 </Link>}
-                <Link className="  text-[#9290C3] lg:block lg:text-sm lg:font-semibold lg:leading-6" href={`/profile/${session.user.email}`}>
+                <Link className="   lg:block lg:text-sm lg:font-semibold lg:leading-6" href={`/profile/${session.user.email}`}>
                   {session?.user.name}
                 </Link>
                 <button
                   onClick={() => {
                     signOut();
                   }}
-                  className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 text-[#9290C3]"
+                  className="hidden lg:border-1 lg:rounded-[20px] text-black lg:px-3 lg:py-[6px]  lg:bg-red-500 lg:block lg:text-sm lg:font-semibold lg:leading-6 "
                 >
                   Log out
                 </button>
@@ -107,27 +99,21 @@ const Navbar = () => {
           <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center gap-x-6">
               <Link href="/" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
-                <Image
-                  width={50}
-                  height={50}
-                  src={Logo}
-                  alt="star logo mobile"
-                />
+                <span className="sr-only">NightMess</span>
               </Link>
               {session ? (
                 <button
                   onClick={() => {
                     signOut();
                   }}
-                  className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Log out
                 </button>
               ) : (
                 <Link
                   href="/register"
-                  className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Sign up
                 </Link>
@@ -160,7 +146,7 @@ const Navbar = () => {
           </Dialog.Panel>
         </Dialog>
       </header>
-    </>
+  
   );
 };
 

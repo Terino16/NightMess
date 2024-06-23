@@ -4,5 +4,5 @@ interface userProps
     hostel:string,
     room:number,
     phone:string
-    seller:boolean
+    profile:boolean
 }

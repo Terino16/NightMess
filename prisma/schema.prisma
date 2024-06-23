@@ -10,12 +10,11 @@ datasource db {
 model User {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
   email    String   @unique
-  password String
   name     String?
   hostel   String?
   room     Int?
   phone    String?  @unique
-  seller   Boolean?
+  profile   Boolean?
 }
 
 model Item {

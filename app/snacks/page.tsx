@@ -13,7 +13,8 @@ const Page = async () => {
     }
  
   return (
-    <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row'>
+    <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row p-4  lg:p-16'>
+     <p className='text-3xl '>Items</p> 
       {items.map((item)=>{
         return(
           <ItemCard key={item.id}

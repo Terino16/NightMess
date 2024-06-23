@@ -1,87 +1,52 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 
-const RegisterPage = () => {
+type Props = {};
+
+const hostelOptions = ["R Block", "Q Block", "L Block", "K Block"];
+
+function Page({}: Props) {
   const [error, setError] = useState("");
   const router = useRouter();
   const { toast } = useToast();
   const { data: session, status: sessionStatus } = useSession();
 
   useEffect(() => {
-    if (sessionStatus === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [sessionStatus, router]);
-
-  const isValidEmail = (email: string) => {
-    const emailRegex = /^[A-Z0-9._%+-]+@vitstudent\.ac\.in$/i;
-    return emailRegex.test(email);
-  };
+    if (sessionStatus == "unauthenticated") router.push("/sigin");
+    if(session?.user?.profile==true) router.push("/");
+  }, []);
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const email = e.target[0].value;
-    const password = e.target[1].value;
-
-    const confirmPassword = e.target[2].value;
-    const name = e.target[3].value;
-    const phone = e.target[4].value;
-
-    if (!isValidEmail(email)) {
-      setError("Email is invalid");
-      toast({
-        title: "Email Invalid",
-        description: "Email should contain @vitstudent.ac.in",
-      });
-      return;
-    }
-
-    if (!password || password.length < 8) {
-      setError("Password is invalid");
-      toast({
-        title: "Password Length",
-        description: "Password Length should be increased",
-      });
-      return;
-    }
-
-    if (confirmPassword !== password) {
-      setError("Passwords are not equal");
-      toast({
-        title: "Password are not same",
-        description: "password and confirm password are not same",
-      });
-      return;
-    }
-
+    const name = e.target.name.value;
+    const phone = e.target.phone.value;
+    const hostel = e.target.hostel.value;
+    const room = e.target.room.value;
+    const email = session?.user?.email;
+    console.log(email, name, phone, hostel, room);
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
-          password,
           name,
           phone,
+          hostel,
+          room,
         }),
       });
-      if (res.status == 400) {
-        toast({
-          title: "Email Duplicate",
-          description: "Email already in use",
-        });
-      }
-      if (res.status === 200)
+      if (res.status === 200) {
         toast({
           title: "Success",
-          description: "Succesfull registered",
+          description: "Successfully registered",
         });
-      router.push("/signin");
+        // router.push("/home");
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -89,145 +54,125 @@ const RegisterPage = () => {
       });
       console.log(error);
     }
-  };
+    };
 
   if (sessionStatus === "loading") {
     return <h1>Loading...</h1>;
   }
+
   return (
-    sessionStatus !== "authenticated" && (
-      <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="flex justify-center flex-col items-center">
-          <h2 className="mt-6 text-center text-2xl leading-9 tracking-tight text-white">
-            Sign up on our website
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="confirmpassword"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Confirm password
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="confirmpassword"
-                    name="confirmpassword"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    autoComplete="text"
-                    required
-                    className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="number"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Phone number
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="number"
-                    name="number"
-                    type="text"
-                    autoComplete="text"
-                    required
-                    className="block w-full px-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div className="flex-col items-center justify-around space-y-3">
-                <button
-                  type="submit"
-                   className="flex w-full border border-black justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  Sign up
-                </button>
-
-                <p className="text-center">Or</p>
-
-                <button
-                  type="submit"
-                  className="flex w-full border border-black justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  onClick={() => signIn("google")}
-                >
-                 ❤️  Sign up with Google
-                </button>
-                <p className="text-red-600 text-center text-[16px] my-4">
-                  {error && error}
-                </p>
-              </div>
-            </form>
+    <div className="w-screen ">
+      <form className="lg:my-16 space-y-6 mt-12  mx-[20%]" onSubmit={handleSubmit}>
+        <div className="w-full">
+          <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2">
+            Name
+          </label>
+          <div className="mt-2">
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autoComplete="text"
+              required
+              className="appearance-none block w-full bg-transparent text-white border border-white rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+            />
           </div>
         </div>
-      </div>
-    )
-  );
-};
 
-export default RegisterPage;
+        <div className="w-full">
+          <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2">
+            Phone number
+          </label>
+          <div className="mt-2">
+            <input
+              id="phone"
+              name="phone"
+              type="text"
+              autoComplete="text"
+              required
+              className="appearance-none block w-full bg-transparent text-white border border-white rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2">
+            Hostel Name
+          </label>
+          <div className="mt-2">
+            <select
+              id="hostel"
+              name="hostel"
+              required
+              className="appearance-none block w-full bg-transparent text-white border border-white rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+            >
+              <option value="" disabled selected>
+                Select your hostel
+              </option>
+              {hostelOptions.map((hostel) => (
+                <option key={hostel} value={hostel}>
+                  {hostel}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="w-full">
+          <label className="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2">
+            Room Number
+          </label>
+          <div className="mt-2">
+            <input
+              id="room"
+              name="room"
+              type="number"
+              autoComplete="text"
+              required
+              className="appearance-none block w-full bg-transparent text-white border border-white rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Register
+        </button>
+      </form>
+      <svg
+        className="absolute bottom-0"
+        viewBox="0 0 1425 205.55"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g>
+          <path
+            d="M0,17.27l23.75,5.09C47.5,27.38,95,37.57,142.5,39.47s95-4.36,142.5-10.28,95-11.35,142.5-7.4,95,17.43,142.5,24,95,6.25,142.5,5.83,95-.9,142.5-3S950,43,997.5,42.92s95,3.12,142.5,2.88,95-4.11,142.5-3.62,95,5.51,118.75,8L1425,52.62v170.2H0Z"
+            fill="#fffff"
+          ></path>
+          <path
+            d="M0,94.56l23.75-6.17C47.5,82.22,95,69.89,142.5,65.2s95-1.64,142.5,4.85S380,86.33,427.5,86.5,522.5,77,570,73.59s95-.66,142.5,1.81,95,4.6,142.5,3.78,95-4.6,142.5-6.58,95-1.89,142.5,1.24,95,9.45,142.5,13.15,95,4.85,118.75,5.35l23.75.57V222.82H0Z"
+            fill="#6FD1FF"
+          ></path>
+          <path
+            d="M0,134,23.75,132C47.5,129.91,95,125.8,142.5,125.39s95,2.88,142.5,5.75,95,5.35,142.5,4,95-6.58,142.5-8.06,95,.66,142.5-.41,95-5.51,142.5-9.21,95-6.66,142.5-5.83,95,5.42,142.5,9.86,95,8.47,142.5,9.05,95-2.47,118.75-4L1425,125v97.84H0Z"
+            fill="#027CFF"
+          ></path>
+          <path
+            d="M0,178.42l23.75-1.64c23.75-1.65,71.25-4.94,118.75-5.59s95,1.23,142.5,2.71,95,2.63,142.5,4.11,95,3.45,142.5,2.88,95-3.54,142.5-8.8,95-12.58,142.5-13.57,95,4.53,142.5,8.23,95,5.67,142.5,4,95-6.91,142.5-9.79,95-3.37,118.75-3.7L1425,157v65.78H0Z"
+            fill="#27272a"
+          ></path>
+        </g>
+        <defs>
+          <clipPath id="clip0">
+            <rect width="1425" height="444" fill="white"></rect>
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
+export default Page;

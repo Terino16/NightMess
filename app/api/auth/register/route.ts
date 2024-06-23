@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         hostel:"",
         room:0,
         phone:phone,
-        seller:false,
+        profile:false,
       },
     });
 
